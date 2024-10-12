@@ -3,6 +3,7 @@ package dao;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.util.ArrayList;
 
 import dto.WordDTO;
 
@@ -12,6 +13,7 @@ public class WordDAO {
 	private String url = "jdbc:oracle:thin:@localhost:1521:orcl";
 	private String driverName = "oracle.jdbc.driver.OracleDriver";
 	private Connection conn = null;
+	
 	
 	public static WordDAO worddao = null;
 		
@@ -43,16 +45,75 @@ public class WordDAO {
 			}
 			return false; // 획득 실패시
 		}
-		public void insert(WordDTO worddTo) {
+		public void insert(WordDTO worddto) {
 			if(conn()) {
-				String sql ="insert into book values(book_seq.nextval,?,?,default)";
-//				PreparedStatement psmt = conn.prepareStatement(sql);
-//				psmt.setString(1, worddTo.getKorean());
-//				psmt.setString(2, worddTo.getEnglish());
+				try {
+				String sql ="insert into wordlove values(?,?)";
+				PreparedStatement psmt = conn.prepareStatement(sql);
+				psmt.setString(1, worddto.getKorean());
+				psmt.setString(2, worddto.getEnglish());
+				int resultInt = psmt.executeUpdate();
+				if(resultInt > 0) {
+					conn.commit();
+				}else {
+					conn.rollback();
+				}
 				
-				
-				
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					try {
+						if(conn != null) {
+							conn.close();
+						}
+					} catch (Exception e2) {
+						// TODO: handle exception
+					}
+				}
 			}
+		}
+		public void delete(String delkor) {
+			if(conn()) {
+				try {
+					String sql = "delete from wordlove where korean=?";
+					PreparedStatement psmt = conn.prepareStatement(sql);
+					psmt.setString(1, delkor);
+					psmt.executeUpdate();
+				} catch (Exception e) {
+				}finally {
+					try {
+						if(conn != null) {
+							conn.close();
+						}
+					} catch (Exception e2) {
+					}
+				}
+			}
+		}
+		public void mod(WordDTO modkor) {
+			if(conn()) {
+				try {
+					String sql = "update wordlove set korean=? where = english";
+					PreparedStatement psmt = conn.prepareStatement(sql);
+					psmt.setString(1, modkor.getKorean());
+					psmt.setString(2, modkor.getEnglish());
+					psmt.executeUpdate();
+				} catch (Exception e) {
+				} finally {
+					try {
+						if(conn != null) {
+							conn.close();
+						}
+					} catch (Exception e2) {
+						// TODO: handle exception
+					}
+				}
+			}
+		}
+		public ArrayList<WordDTO> selectAll(){
+			ArrayList<WordDTO> wlist = new ArrayList<>();
+//			if()
+			return null;
 			
 		}
 }

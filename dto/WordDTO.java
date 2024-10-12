@@ -3,8 +3,9 @@ package dto;
 public class WordDTO {
 	
 
-	private String english = null;
-	private String korean = null;
+	private String english;
+	private String korean;
+	
 	
 	
 	
