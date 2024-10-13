@@ -2,12 +2,18 @@ package dto;
 
 public class WordDTO {
 	
-
+	private int num;
 	private String english;
 	private String korean;
 	
 	
 	
+	public int getNum() {
+		return num;
+	}
+	public void setNum(int num) {
+		this.num = num;
+	}
 	
 	public String getEnglish() {
 		return english;
@@ -25,6 +31,7 @@ public class WordDTO {
 	// 디버깅용
 	@Override
 	public String toString() {
-		return "WordDAO [english=" + english + ", korean=" + korean + "]";
+		return "WordDTO [num=" + num + ", english=" + english + ", korean=" + korean + "]";
 	}
+
 }

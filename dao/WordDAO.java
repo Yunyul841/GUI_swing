@@ -3,21 +3,22 @@ package dao;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 
 import dto.WordDTO;
 
 public class WordDAO {
-	private String username = "system";
-	private String password = "11111111";
-	private String url = "jdbc:oracle:thin:@localhost:1521:orcl";
-	private String driverName = "oracle.jdbc.driver.OracleDriver";
-	private Connection conn = null;
+		private String username = "system";
+		private String password = "11111111";
+		private String url = "jdbc:oracle:thin:@localhost:1521:orcl";
+		private String driverName = "oracle.jdbc.driver.OracleDriver";
+		private Connection conn = null;
 	
-	
-	public static WordDAO worddao = null;
+		// 싱글톤 디자인 코딩 스타트
+		public static WordDAO worddao = null;
 		
-		public  void WordDAO() {
+		private WordDAO() {
 			init();
 		}
 		public static WordDAO getInstance() {
@@ -45,10 +46,15 @@ public class WordDAO {
 			}
 			return false; // 획득 실패시
 		}
+		
+		
+		
+		
+		
 		public void insert(WordDTO worddto) {
 			if(conn()) {
 				try {
-				String sql ="insert into wordlove values(?,?)";
+				String sql ="insert into wordlove values(wordlove_seq.nextval,?,?)";
 				PreparedStatement psmt = conn.prepareStatement(sql);
 				psmt.setString(1, worddto.getKorean());
 				psmt.setString(2, worddto.getEnglish());
@@ -72,12 +78,22 @@ public class WordDAO {
 				}
 			}
 		}
-		public void delete(String delkor) {
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		public void delete(int delNu) {
 			if(conn()) {
 				try {
-					String sql = "delete from wordlove where korean=?";
+					String sql = "delete from wordlove where num=?";
 					PreparedStatement psmt = conn.prepareStatement(sql);
-					psmt.setString(1, delkor);
+					psmt.setInt(1, delNu);
 					psmt.executeUpdate();
 				} catch (Exception e) {
 				}finally {
@@ -90,15 +106,37 @@ public class WordDAO {
 				}
 			}
 		}
-		public void mod(WordDTO modkor) {
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		public void update(WordDTO mdto) {
 			if(conn()) {
 				try {
-					String sql = "update wordlove set korean=? where = english";
+					String sql = "update wordlove set korean=?, english = ? where num = ?";
 					PreparedStatement psmt = conn.prepareStatement(sql);
-					psmt.setString(1, modkor.getKorean());
-					psmt.setString(2, modkor.getEnglish());
+					psmt.setInt(3, mdto.getNum());
+					psmt.setString(1, mdto.getKorean());
+					psmt.setString(2, mdto.getEnglish());
 					psmt.executeUpdate();
+					conn.commit();
+					if (psmt.executeUpdate() == 0) {
+						System.out.println("존재하지 않습니다");
+					}
 				} catch (Exception e) {
+					//System.out.println("존재하지 않습니다");
 				} finally {
 					try {
 						if(conn != null) {
@@ -110,11 +148,45 @@ public class WordDAO {
 				}
 			}
 		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		public ArrayList<WordDTO> selectAll(){
-			ArrayList<WordDTO> wlist = new ArrayList<>();
-//			if()
-			return null;
-			
+			ArrayList<WordDTO> wlist = new ArrayList<WordDTO>();
+			if(conn()) {
+				try {
+					String sql = "select * from wordlove";
+					PreparedStatement psmt = conn.prepareStatement(sql);
+					ResultSet rs = psmt.executeQuery();
+					
+					while(rs.next()) {
+						WordDTO wTemp = new WordDTO();
+						wTemp.setNum(rs.getInt("num"));
+						wTemp.setKorean(rs.getString("korean"));
+						wTemp.setEnglish(rs.getString("english"));
+						wlist.add(wTemp);
+					}
+					
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					try {
+						if(conn != null) {
+							conn.close();
+						}
+					} catch (Exception e2) {
+				}
+			}
 		}
+		return wlist;
+	}
 }
 
